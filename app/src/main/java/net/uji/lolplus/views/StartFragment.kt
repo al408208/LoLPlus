@@ -14,11 +14,13 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import kotlinx.android.synthetic.main.fragment_start.*
 
 import net.uji.lolplus.R
+import net.uji.lolplus.presenter.StartPresenter
 
 
 class StartFragment : Fragment() {
 
-    private val videos = arrayListOf ("3Eu7NzzHC84","aR-KAldshAE","zF5Ddo9JdpY","vzHrjOMfHPY","ZjvDFvzfxsQ")
+    val videos = arrayListOf ("3Eu7NzzHC84","aR-KAldshAE","zF5Ddo9JdpY","vzHrjOMfHPY","ZjvDFvzfxsQ")
+    private lateinit var presenter: StartPresenter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,24 +33,21 @@ class StartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val fab= requireActivity().findViewById(R.id.fab) as FloatingActionButton
         fab.show()
-        loadvideo()
-        btnlink.setOnClickListener{onClickLink()}
+        presenter = StartPresenter(this)
+        //loadvideo()
+        btnlink.setOnClickListener{presenter.link()}
     }
 
-    private fun loadvideo() {
+    fun showVideo(videoId: String) {
         val ytVideo: YouTubePlayerView = requireActivity().findViewById (R.id.youtube_view)
         lifecycle.addObserver (ytVideo)
         ytVideo.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
-                val n= (Math.random()*5).toInt()
-                val videoId = videos[n]
                 youTubePlayer.cueVideo(videoId, 0f)
             }
         })
     }
-
-    private fun onClickLink() {
-        val url = "https://euw.leagueoflegends.com/es-es/"
+    fun openLink(url: String) {
         val myintent = Intent(Intent.ACTION_VIEW)
         myintent.data = Uri.parse(url)
         startActivity(myintent)

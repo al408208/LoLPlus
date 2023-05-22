@@ -27,17 +27,20 @@ import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
 import kotlinx.android.synthetic.main.row_skills.view.*
 import net.uji.lolplus.R
+import net.uji.lolplus.model.PictureModel
 import net.uji.lolplus.model.User
+import net.uji.lolplus.presenter.UserPresenter
 
 
 class UserFragment : Fragment() {
 
-    private lateinit var userShare: SharedPreferences
-    private lateinit var usersAL: ArrayList<User>
-    private var usuario: User?=null
-    private var user: FirebaseUser?=null
+    lateinit var userShare: SharedPreferences
+    lateinit var usersAL: ArrayList<User>
+    var usuario: User?=null
+    var user: FirebaseUser?=null
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private lateinit var presenter: UserPresenter
 
 
     override fun onCreateView(
@@ -49,6 +52,7 @@ class UserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
+        presenter= UserPresenter(this)
         db = FirebaseFirestore.getInstance()
         val fab= requireActivity().findViewById(R.id.fab) as FloatingActionButton
         fab.hide()
@@ -60,7 +64,7 @@ class UserFragment : Fragment() {
 
     private fun onClickUser(v: View) {
         val btn = v as Button
-        loadUser()
+        presenter.loadUser()
         btnlog.isEnabled = false
         btnreg.isEnabled = false
         if(usuario==null){
@@ -74,7 +78,7 @@ class UserFragment : Fragment() {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity()) { task ->
                     if (task.isSuccessful) {
                         user = auth.currentUser
-                        getUser()
+                        presenter.logUser()
                         Toast.makeText(context,"Logged in successfully", Toast.LENGTH_LONG).show()
 
                         edPass.setText("")
@@ -94,7 +98,7 @@ class UserFragment : Fragment() {
                     auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(requireActivity()) { task ->
                         if (task.isSuccessful) {
                             user = auth.currentUser
-                            registerUser()
+                            presenter.regUser()
                             Toast.makeText(context,"Successfully registered", Toast.LENGTH_LONG).show()
 
                             edPass.setText("")
@@ -114,77 +118,5 @@ class UserFragment : Fragment() {
         btnreg.isEnabled = true
     }
 
-    private fun loadUser () {
-        val usuariosShare = userShare.all
-        usersAL = ArrayList()
-        for (entry in usuariosShare.entries) {
-            val jsonUsuario = entry.value.toString()
-            val user = Gson().fromJson(jsonUsuario, User::class.java)
-            usersAL.add(user)
-        }
 
-        if(usersAL.isNotEmpty()){
-            usuario= usersAL[0]
-        }
-    }
-    private fun saveUsuario (u:User) {
-        val edit = userShare.edit()
-        edit.putString(u.nick, Gson().toJson(u))
-        edit.apply()
-    }
-
-    private fun registerUser(){
-        val user = FirebaseAuth.getInstance().currentUser
-        val profileUpdates = UserProfileChangeRequest.Builder().setDisplayName(edUser.text.toString()).build()
-
-        user?.updateProfile(profileUpdates)?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                usuario= User(user.displayName.toString())
-                db.collection("users").document(usuario!!.nick).set(usuario!!)
-                saveUsuario(usuario!!)
-                updateHeader(usuario!!)
-                Log.d("TAG", "User profile updated.")
-            }
-        }
-    }
-    private fun getUser(){
-        val user = FirebaseAuth.getInstance().currentUser
-        val docRef = db.collection("users").document(user!!.displayName.toString())
-        docRef.get().addOnSuccessListener { d ->
-            if (d != null) {
-                val nick = d["nick"] as String
-                val champfav = d["champfav"] as String
-                val posicionfav = d["posicionfav"] as String
-                val finicio = d["finicio"] as String
-                val estado = d["estado"] as String
-                usuario=User(nick = nick,champfav = champfav, positionfav = posicionfav, fstart = finicio, state = estado)
-                saveUsuario(usuario!!)
-                updateHeader(usuario!!)
-            }
-        }
-    }
-
-    private fun updateHeader(u:User) {
-
-        val navigationView = requireActivity().findViewById<View>(R.id.nav_view) as NavigationView
-        val miivavatar = navigationView.getHeaderView(0).ivavatar
-        val mitvavatar = navigationView.getHeaderView(0).tvavatar
-        if(usuario!!.champfav=="noone"){
-            miivavatar.setImageResource(R.drawable.noone)
-        }else{
-
-            var rq = Volley.newRequestQueue(context)
-            val imageRequest = ImageRequest("https://opgg-static.akamaized.net/images/lol/champion/${usuario!!.champfav}.png?image=q_auto,w_140&v=1585730185",
-                { response ->
-                    miivavatar.setImageBitmap(response)
-                }, 0, 0, null, null,
-                { error ->
-                    // Manejar el error aquí
-                }
-            )
-            rq.add(imageRequest)
-            //Picasso.get().load("https://opgg-static.akamaized.net/images/lol/champion/${usuario!!.champfav}.png?image=q_auto,w_140&v=1585730185").into( miivavatar)
-        }
-        mitvavatar.text = u.nick
-    }
 }

@@ -18,18 +18,20 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 
 import net.uji.lolplus.R
 import net.uji.lolplus.model.User
+import net.uji.lolplus.presenter.ProfilePresenter
+import net.uji.lolplus.presenter.UserPresenter
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 class ProfileFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
-    private lateinit var userShare: SharedPreferences
-    private lateinit var usersAL: ArrayList<User>
-    private lateinit var user: User
-    private lateinit var db: FirebaseFirestore
+    lateinit var userShare: SharedPreferences
+    lateinit var usersAL: ArrayList<User>
+    lateinit var user: User
     private var positions = arrayListOf ("ADC","MID","TOP","JUN","SUPP")
     private lateinit var pselected:String
+    private lateinit var presenter: ProfilePresenter
 
 
     override fun onCreateView(
@@ -41,13 +43,13 @@ class ProfileFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        db = FirebaseFirestore.getInstance()
+        presenter= ProfilePresenter(this)
         val fab= requireActivity().findViewById(R.id.fab) as FloatingActionButton
         fab.hide()
         userShare = requireActivity().getSharedPreferences("usuarioShare", Context.MODE_PRIVATE)
-        loadUser()
+        presenter.loadUser()
         cargarDatos()
-        btnsaveprofile.setOnClickListener{saveProfile()}
+        btnsaveprofile.setOnClickListener{presenter.save()}
         btnfecha.setOnClickListener { clickDatePicker()  }
     }
 
@@ -69,16 +71,11 @@ class ProfileFragment : Fragment(), AdapterView.OnItemSelectedListener {
         }else{
             positions=arrayListOf ("","ADC","MID","TOP","JUN","SUPP")
         }
-        loadSpinner()
-    }
-
-    private fun loadSpinner(){
-        val conceptostxt = positions.mapIndexed { index, posicion -> posicion }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, conceptostxt)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val adapter=presenter.loadSpinner()
         spinnerposicion.onItemSelectedListener = this
         spinnerposicion.adapter = adapter
     }
+
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
     }
@@ -103,39 +100,14 @@ class ProfileFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     }
 
-    private fun saveProfile(){
-        if(profilestate.text.toString().length>150){
-            Toast.makeText(context,"Your tate has ${profilestate.text.toString().length} characters", Toast.LENGTH_LONG).show()
-        }else{
-            user.state=profilestate.text.toString()
-            user.fstart=tvprofiledate.text.toString()
-            user.positionfav=pselected
-            //usuario= Usuario(usuario.nick,usuario.champfav,"","",etestadoperfil.text.toString())
-            saveUser(user)
-            db.collection("users").document(user.nick)
-                .update(mapOf(
-                    "estado" to profilestate.text.toString(),
-                    "finicio" to user.fstart,
-                    "posicionfav" to user.positionfav
-                ))
-            Toast.makeText(context,"Profile updated successfully", Toast.LENGTH_LONG).show()
-        }
+    fun saveU(){
+        user.state = profilestate.text.toString()
+        user.fstart = tvprofiledate.text.toString()
+        user.positionfav = pselected
+        //usuario= Usuario(usuario.nick,usuario.champfav,"","",etestadoperfil.text.toString())
     }
 
-    private fun loadUser () {
-        val usersShare = userShare.all
-        usersAL = ArrayList()
-        for (entry in usersShare.entries) {
-            val jsonUser = entry.value.toString()
-            val user = Gson().fromJson(jsonUser, User::class.java)
-            usersAL.add(user)
-        }
-        user= usersAL[0]
-    }
-    private fun saveUser (u:User) {
-        val edit = userShare.edit()
-        edit.putString(u.nick, Gson().toJson(u))
-        edit.apply()
-    }
+
+
 
 }

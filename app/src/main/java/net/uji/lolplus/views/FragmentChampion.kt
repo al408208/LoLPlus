@@ -21,46 +21,47 @@ import kotlinx.android.synthetic.main.row_skills.view.*
 
 import net.uji.lolplus.R
 import net.uji.lolplus.model.Champ
+import net.uji.lolplus.presenter.ChampPresenter
 
 class FragmentChampion : Fragment() {
-    private lateinit var champ: Champ
-    private lateinit var sound: MediaPlayer
-    private var position=0
-    private var fame=0
-    private lateinit var db: FirebaseFirestore
-    private lateinit var img : ImageView
+
     private lateinit var rq: RequestQueue
-    private lateinit var btnsound: Button
-//kk
+    private lateinit var presenter: ChampPresenter
+
+    private lateinit var champ: Champ
+    //private lateinit var sound: MediaPlayer
+    private var position = 0
+    private lateinit var img: ImageView
+    private lateinit var btnSound: Button
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_champ, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        db = FirebaseFirestore.getInstance()
         val datos = arguments
-        champ= datos!!.getSerializable("champ") as Champ
-        btnsound = view.findViewById(R.id.btnsound) as Button
-        img = view.findViewById(R.id.ivbigpicture) as ImageView
-        getData()
-        loadData()
-        loadSound()
-        btnsound.setOnClickListener{onClickSound()}
-        btnplus.setOnClickListener{ v->passPicture(v)}
-        btnless.setOnClickListener{ v->passPicture(v)}
+        champ = datos!!.getSerializable("champ") as Champ
+        btnSound = view.findViewById(R.id.btnsound) as Button
+        img = view.findViewById(R.id.ivbigpicture)
 
+        btnSound.setOnClickListener { presenter.playSound() }
+        view.findViewById<ImageButton>(R.id.btnplus).setOnClickListener { presenter.next() }
+        view.findViewById<ImageButton>(R.id.btnless).setOnClickListener { presenter.previous() }
+
+        // Crear instancia del presentador
+        presenter = ChampPresenter(this)
+        presenter.loadDatas(champ)
+        //presenter.getData()
     }
-
-
-    private fun loadData(){
-        tvnombredetail.text=champ.name
-        tvhsitory.text=champ.history
+    fun showChampionData(championData: Champ,fame:Int) {
+        tvnombredetail.text = championData.name
+        tvhsitory.text = championData.history
+        tvposicion.text = championData.position
         rq = Volley.newRequestQueue(context)
-        val imageRequest = ImageRequest("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.name}_${position}.jpg",
+        val imageRequest = ImageRequest("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${championData.name}_${position}.jpg",
             { response ->
                 img.setImageBitmap(response)
             }, 0, 0, null, null,
@@ -70,77 +71,34 @@ class FragmentChampion : Fragment() {
         )
         rq.add(imageRequest)
         //Picasso.get().load("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.name}_${position}.jpg").into( ivbigpicture)
-        tvposicion.text=champ.position
-        var id= context?.resources?.getIdentifier("dif${champ.difficulty}","drawable", requireContext().packageName)
+        tvposicion.text=championData.position
+        var id= context?.resources?.getIdentifier("dif${championData.difficulty}","drawable", requireContext().packageName)
         ivdificultad.setImageResource(id!!)
+        tvfame.text=fame.toString()
+    }
+    fun showError(message: String) {
+        Log.w("david", "Error: $message")
     }
 
-    private fun loadSound() {// load sonido
-        var id= context?.resources?.getIdentifier("${champ.name.toLowerCase()}","raw", requireContext().packageName)
-        sound= MediaPlayer.create(context, id!!)
-    }
-    private fun onClickSound(){
+    fun playSound(sound:MediaPlayer) {
         sound.seekTo(0)
         sound.start()
     }
 
-    private fun passPicture(v: View) {
-        val btn = v as ImageButton
-
-        if(btn.id== R.id.btnplus) {
-            position++
-            if(position==3){
-                position=0
-            }
-            rq = Volley.newRequestQueue(context)
-            val imageRequest = ImageRequest("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.name}_${position}.jpg",
-                { response ->
-                    img.setImageBitmap(response)
-                }, 0, 0, null, null,
-                { error ->
-                    // Manejar el error aquí
-                }
-            )
-            rq.add(imageRequest)
-            //Picasso.get().load("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.name}_${position}.jpg").into( ivbigpicture)
-        }else{
-            position--
-            if(position==-1){
-                position=2
-            }
-            rq = Volley.newRequestQueue(context)
-            val imageRequest = ImageRequest("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.name}_${position}.jpg",
-                { response ->
-                    img.setImageBitmap(response)
-                }, 0, 0, null, null,
-                { error ->
-                    // Manejar el error aquí
-                }
-            )
-            rq.add(imageRequest)
-            //Picasso.get().load("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.name}_${position}.jpg").into( ivbigpicture)
-        }
+    fun showPicture(imageUrl: String) {
+        loadImage(imageUrl)
     }
 
-    private fun getData() {
-        db.collection("users")
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    documentToList(task.result!!)
-                    tvfame.text=fame.toString()
-                } else {
-                    Log.w("david","Error getting documents.", task.exception)
-                }
+    private fun loadImage(imageUrl: String) {
+        rq = Volley.newRequestQueue(context)
+        val imageRequest = ImageRequest(imageUrl,
+            { response ->
+                img.setImageBitmap(response)
+            }, 0, 0, null, null,
+            { error ->
+                // Manejar el error aquí
             }
+        )
+        rq.add(imageRequest)
     }
-    private fun documentToList(documents: QuerySnapshot) {
-        documents.forEach { d ->
-            val champfav = d["champfav"] as String
-            if(champfav==champ.name){
-                fame++
-            }
-        }
-    }
-
 }
