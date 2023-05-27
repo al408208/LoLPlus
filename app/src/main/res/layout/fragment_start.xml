@@ -57,13 +57,12 @@
                 android:id="@+id/btnlink"
                 android:layout_width="310dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginTop="30dp"
                 android:background="@color/fondoboton"
                 android:text="Official page for more information "
                 android:textSize="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/youtube_view" />
 
