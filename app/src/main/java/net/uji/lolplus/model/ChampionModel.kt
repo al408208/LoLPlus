@@ -1,6 +1,5 @@
 package net.uji.lolplus.model
 
-import android.content.Context
 import android.media.MediaPlayer
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -18,8 +17,8 @@ class ChampionModel(private val view: FragmentChampion)  {
         this.champ = champ
     }
 
-    fun loadSound(champ: Champ) {
-        var id= view.requireContext().resources?.getIdentifier("${champ.name.toLowerCase()}","raw", view.requireContext().packageName)
+    fun loadSound(champ: Champ) {//just load the champions voice
+        val id= view.requireContext().resources?.getIdentifier("${champ.name.toLowerCase()}","raw", view.requireContext().packageName)
         sound= MediaPlayer.create(view.requireContext(), id!!)
     }
 
@@ -53,7 +52,7 @@ class ChampionModel(private val view: FragmentChampion)  {
         view.playSound(sound)
     }
 
-    fun onNextPictureButtonClicked(): String {
+    fun onNextPictureButtonClicked(): String {//simulates the carousel
         position++
         if (position == 3) {
             position = 0
@@ -62,7 +61,7 @@ class ChampionModel(private val view: FragmentChampion)  {
 
     }
 
-    fun onPreviousPictureButtonClicked(): String {
+    fun onPreviousPictureButtonClicked(): String {//simulates the carousel
         position--
         if (position == -1) {
             position = 2

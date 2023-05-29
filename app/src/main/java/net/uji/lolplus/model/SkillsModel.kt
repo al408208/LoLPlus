@@ -8,7 +8,7 @@ class SkillsModel(private val view: FragmentSkills) {
 
     private lateinit var db: FirebaseFirestore
 
-    fun getData(champ: Champ) {
+    fun getData(champ: Champ) {//just load the info
         db = FirebaseFirestore.getInstance()
 
         db.collection("campeones").document(champ.name).collection("habilidades")

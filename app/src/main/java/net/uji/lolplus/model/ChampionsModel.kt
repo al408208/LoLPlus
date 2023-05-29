@@ -1,7 +1,6 @@
 package net.uji.lolplus.model
 
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import net.uji.lolplus.views.ChampionsFragment
@@ -17,20 +16,20 @@ class ChampionsModel(private val view: ChampionsFragment) {
         return original.filter { cham -> cham.name.contains(query,ignoreCase = true) }
     }
 
-    fun orderChampions(): List<Champ> {
+    fun orderChampions(): List<Champ> { //control the order
         norden++
         if(norden==0){
-            Toast.makeText(view.requireContext(),"Orden alfabetico", Toast.LENGTH_LONG).show()
+            view.showMessage("Orden alfabetico")
             return champions.sortedBy { it.name }
 
         }else if(norden==1){
-            Toast.makeText(view.requireContext(),"Orden alfabetico descendiente", Toast.LENGTH_LONG).show()
+            view.showMessage("Orden alfabetico descendiente")
             return champions.sortedByDescending { it.name }
         }else if(norden==2){
-            Toast.makeText(view.requireContext(),"Orden por rol", Toast.LENGTH_LONG).show()
+            view.showMessage("Orden por rol")
             return champions.sortedBy { it.role }
         }else if(norden==3){
-            Toast.makeText(view.requireContext(),"Orden de menor a mayor dificultad", Toast.LENGTH_LONG).show()
+            view.showMessage("Orden de menor a mayor dificultad")
             norden=-1
             return champions.sortedBy { it.difficulty }
         }else{
@@ -38,7 +37,7 @@ class ChampionsModel(private val view: ChampionsFragment) {
         }
     }
 
-    fun getData() {
+    fun getData() { //get the firebase data
         val db = FirebaseFirestore.getInstance()
         db.collection("campeones")
             .get()
@@ -62,4 +61,5 @@ class ChampionsModel(private val view: ChampionsFragment) {
             champions.add(Champ(name = nombre, history = historia, role = rol, position = posicion, difficulty = dificultad))
         }
     }
+
 }

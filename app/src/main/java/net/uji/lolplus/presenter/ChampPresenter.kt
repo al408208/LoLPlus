@@ -1,10 +1,8 @@
 package net.uji.lolplus.presenter
 
-import android.util.Log
 import net.uji.lolplus.model.Champ
 import net.uji.lolplus.model.ChampionModel
 import net.uji.lolplus.views.FragmentChampion
-import net.uji.lolplus.views.FragmentSkills
 
 class ChampPresenter(private val view: FragmentChampion)  {
 

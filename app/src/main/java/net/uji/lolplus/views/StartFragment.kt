@@ -34,7 +34,6 @@ class StartFragment : Fragment() {
         val fab= requireActivity().findViewById(R.id.fab) as FloatingActionButton
         fab.show()
         presenter = StartPresenter(this)
-        //loadvideo()
         btnlink.setOnClickListener{presenter.link()}
     }
 

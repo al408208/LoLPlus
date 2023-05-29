@@ -15,15 +15,12 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.Volley
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header_main.view.*
-import kotlinx.android.synthetic.main.row_skills.view.*
 import net.uji.lolplus.R
 import net.uji.lolplus.model.Champ
 import net.uji.lolplus.model.User
@@ -60,9 +57,21 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-        setInitialFragment()
+        //setInitialFragment()
         loadUser()
         updateHeader()
+        if (savedInstanceState != null) {
+            val fragment = supportFragmentManager.getFragment(savedInstanceState, "yourFragmentKey")
+            // Reemplazar el fragmento actual con el fragmento restaurado si es necesario
+            if (fragment != null) {
+                // Reemplazar el fragmento actual con el fragmento restaurado
+                replaceFragment(fragment)
+            }
+        } else {
+            // Configuración inicial de los fragmentos si no hay estado guardado
+            setInitialFragment()
+        }
+
     }
 
     private fun initShare() {
@@ -70,7 +79,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         temaShare=getSharedPreferences("tema", Context.MODE_PRIVATE)
         tema = temaShare.getInt("tema",0)
     }
-    private fun tema(){
+    private fun tema(){//Change the colors and styles
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             tema=0
@@ -87,17 +96,17 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         startActivity(intent)
     }
 
-    private fun updateHeader() {
+    private fun updateHeader() { //to update changes in the name and photo
         val miivavatar = nav_view.getHeaderView(0).ivavatar
         val mitvavatar = nav_view.getHeaderView(0).tvavatar
-        //aqui meteriamos el seleccionar una foto o un nombre
+        //here we would select a photo or a name
         if(user!=null){
             mitvavatar.text = user!!.nick
             if(user!!.champfav=="noone"){
                 miivavatar.setImageResource(R.drawable.noone)
             }else{
 
-                var rq = Volley.newRequestQueue(this)
+                val rq = Volley.newRequestQueue(this)
                 val imageRequest = ImageRequest("https://opgg-static.akamaized.net/images/lol/champion/${user!!.champfav}.png?image=q_auto,w_140&v=1585730185",
                     { response ->
                         miivavatar.setImageBitmap(response)
@@ -107,7 +116,6 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                     }
                 )
                 rq.add(imageRequest)
-                //Picasso.get().load("https://opgg-static.akamaized.net/images/lol/champion/${user!!.champfav}.png?image=q_auto,w_140&v=1585730185").into( miivavatar)
             }
         }else{
             miivavatar.setImageResource(R.drawable.noone)
@@ -162,12 +170,13 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.add(
             R.id.frame,
-            StartFragment()
+            StartFragment(),
+            "yourFragmentTag"
         )
         fragmentTransaction.commit()
     }
 
-    private fun checkSignout(){
+    private fun checkSignout(){// to control if the user sign out, its just a dialog
         loadUser()
         if(user!=null){
             alert("Are you sure you want to sing out?", "Exit") {
@@ -197,7 +206,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         }
     }
 
-    fun clickChampion(v: View){
+    fun clickChampion(v: View){//go to the second view
         loadUser()
         if(user!=null) {
             val campeonp = v.tag as Champ
@@ -209,7 +218,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         }
     }
 
-    private fun loadUser () {
+    private fun loadUser () {//control the state of the sesion
         val usuariosShare = userShare.all
         usersAL = ArrayList()
         for (entry in usuariosShare.entries) {
@@ -228,5 +237,14 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         edit.remove(u.nick)
         edit.apply()
         user=null
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val yourFragment = supportFragmentManager.findFragmentByTag("yourFragmentTag")
+        if (yourFragment != null) {
+            supportFragmentManager.putFragment(outState, "yourFragmentKey", yourFragment)
+        }
+
     }
 }

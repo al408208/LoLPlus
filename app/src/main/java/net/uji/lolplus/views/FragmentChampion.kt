@@ -13,11 +13,7 @@ import android.widget.ImageView
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.Volley
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_champ.*
-import kotlinx.android.synthetic.main.row_skills.view.*
 
 import net.uji.lolplus.R
 import net.uji.lolplus.model.Champ
@@ -70,9 +66,8 @@ class FragmentChampion : Fragment() {
             }
         )
         rq.add(imageRequest)
-        //Picasso.get().load("https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champ.name}_${position}.jpg").into( ivbigpicture)
         tvposicion.text=championData.position
-        var id= context?.resources?.getIdentifier("dif${championData.difficulty}","drawable", requireContext().packageName)
+        val id= context?.resources?.getIdentifier("dif${championData.difficulty}","drawable", requireContext().packageName)
         ivdificultad.setImageResource(id!!)
         tvfame.text=fame.toString()
     }

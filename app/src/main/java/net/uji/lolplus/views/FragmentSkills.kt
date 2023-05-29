@@ -34,7 +34,7 @@ class FragmentSkills : Fragment() {
         rvSkills = view.findViewById(R.id.rvSkills)
         initRV()
 
-        // Crear instancia del presentador
+        // Create presenter instance
         model = SkillsModel(this)
         model.getData(champ)
     }
@@ -47,12 +47,12 @@ class FragmentSkills : Fragment() {
 
 
 
-    // Método para mostrar las habilidades
+    // Method to display the skills
     fun showSkills(skills: ArrayList<Skill>) {
         adapter.setHabilidades(skills)
     }
 
-    // Método para mostrar errores
+    // Method to show errors
     fun showError(message: String) {
         Log.w("david", "Error getting skills: $message")
     }

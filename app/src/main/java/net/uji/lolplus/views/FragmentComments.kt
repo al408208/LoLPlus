@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_comments.*
 
 import net.uji.lolplus.R
@@ -16,8 +16,6 @@ import net.uji.lolplus.model.Champ
 import net.uji.lolplus.model.Comment
 import net.uji.lolplus.model.User
 import net.uji.lolplus.presenter.CommentPresenter
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 class FragmentComments : Fragment(),ComentAdapter.OnLongClickListenerComent {
@@ -64,7 +62,9 @@ class FragmentComments : Fragment(),ComentAdapter.OnLongClickListenerComent {
         adapter.setComentarios(comments)
     }
 
-
+    fun showMessage(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -80,7 +80,7 @@ class FragmentComments : Fragment(),ComentAdapter.OnLongClickListenerComent {
         }
     }
 
-    override fun OnLongClickComentario(comentario: Comment): Boolean {
+    override fun OnLongClickComentario(comentario: Comment): Boolean {//only in our own comment
 
         if(comentario.user.nick==user.nick){
             presenter.showDialog(champ,comentario)

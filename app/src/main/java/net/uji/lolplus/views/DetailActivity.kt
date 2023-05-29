@@ -7,13 +7,10 @@ import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.Volley
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.dialogperfil.view.*
-import kotlinx.android.synthetic.main.row_comment.view.*
 import net.uji.lolplus.R
 import net.uji.lolplus.model.Champ
 import net.uji.lolplus.model.Comment
@@ -32,7 +29,19 @@ class DetailActivity : AppCompatActivity(),
         nav_view.setOnNavigationItemSelectedListener(this)
 
         championselected=intent.getSerializableExtra("campeon") as Champ
-        setInitialFragment()
+
+        if (savedInstanceState != null) {
+            val fragment = supportFragmentManager.getFragment(savedInstanceState, "yourFragmentKey")
+            // Reemplazar el fragmento actual con el fragmento restaurado si es necesario
+            if (fragment != null) {
+                // Reemplazar el fragmento actual con el fragmento restaurado
+                replaceFragment(fragment)
+            }
+        } else {
+            // Configuración inicial de los fragmentos si no hay estado guardado
+            setInitialFragment()
+        }
+        //setInitialFragment()
 
     }
 
@@ -68,7 +77,7 @@ class DetailActivity : AppCompatActivity(),
         datos.putSerializable("champ", championselected)
         fragment.arguments = datos
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frame, fragment)
+        fragmentTransaction.replace(R.id.frame, fragment,"yourFragmentTag")
         fragmentTransaction.commit()
     }
 
@@ -83,7 +92,7 @@ class DetailActivity : AppCompatActivity(),
             perfilLayout.ivperfildialog.setImageResource(R.drawable.noone)
         }else{
 
-            var rq = Volley.newRequestQueue(this)
+            val rq = Volley.newRequestQueue(this)
             val imageRequest = ImageRequest("https://opgg-static.akamaized.net/images/lol/champion/${comentariop.user.champfav}.png?image=q_auto,w_140&v=1585730185",
                 { response ->
                     perfilLayout.ivperfildialog.setImageBitmap(response)
@@ -103,6 +112,15 @@ class DetailActivity : AppCompatActivity(),
         builder.setView(perfilLayout)
         builder.setPositiveButton("Accept") { dialog, whichButton ->  }
         builder.show()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val yourFragment = supportFragmentManager.findFragmentByTag("yourFragmentTag")
+        if (yourFragment != null) {
+            supportFragmentManager.putFragment(outState, "yourFragmentKey", yourFragment)
+        }
+
     }
 
 }

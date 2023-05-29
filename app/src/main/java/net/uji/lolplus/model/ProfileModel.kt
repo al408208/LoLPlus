@@ -12,7 +12,7 @@ class ProfileModel(private val view: ProfileFragment) {
 
 
     private lateinit var db: FirebaseFirestore
-    private var positions = arrayListOf ("ADC","MID","TOP","JUN","SUPP")
+    private var positions = arrayListOf ("ADC","MID","TOP","JUN","SUPP")//spinner array
 
     fun saveProfile(){
 
@@ -52,7 +52,7 @@ class ProfileModel(private val view: ProfileFragment) {
     fun loadSpinner(): ArrayAdapter<String> {
         val conceptostxt = positions.mapIndexed { index, posicion -> posicion }
         val adapter = ArrayAdapter(view.requireContext(), R.layout.simple_spinner_item, conceptostxt)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
         return adapter
     }
 

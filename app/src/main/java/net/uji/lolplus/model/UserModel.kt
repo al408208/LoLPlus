@@ -36,7 +36,7 @@ class UserModel(private val view: UserFragment) {
         edit.apply()
     }
 
-    fun registerUser(profileUpdates: UserProfileChangeRequest) {
+    fun registerUser(profileUpdates: UserProfileChangeRequest) {//we create a new user in FirebaseAuth
         val user = FirebaseAuth.getInstance().currentUser
         db = FirebaseFirestore.getInstance()
         user?.updateProfile(profileUpdates)?.addOnCompleteListener { task ->
@@ -50,7 +50,7 @@ class UserModel(private val view: UserFragment) {
         }
     }
 
-    fun getUser(){
+    fun getUser(){//or we get the user that already exist
         val user = FirebaseAuth.getInstance().currentUser
         db = FirebaseFirestore.getInstance()
         val docRef = db.collection("users").document(user!!.displayName.toString())
@@ -61,7 +61,7 @@ class UserModel(private val view: UserFragment) {
                 var posicionfav = ""
                 var finicio = ""
                 var estado = ""
-                if(d["champfav"] !=null){
+                if(d["champfav"] !=null){//its necesary to fill the data make ="" cause if we dont its a null...
                     champfav = d["champfav"] as String
                 }
                 if(d["posicionfav"] !=null){
@@ -81,7 +81,7 @@ class UserModel(private val view: UserFragment) {
         }
     }
 
-    private fun updateHeader(u:User) {
+    private fun updateHeader(u:User) {//when we are in, we need to update de header
 
         val navigationView = view.requireActivity().findViewById<View>(R.id.nav_view) as NavigationView
         val miivavatar = navigationView.getHeaderView(0).ivavatar
@@ -100,7 +100,6 @@ class UserModel(private val view: UserFragment) {
                 }
             )
             rq.add(imageRequest)
-            //Picasso.get().load("https://opgg-static.akamaized.net/images/lol/champion/${usuario!!.champfav}.png?image=q_auto,w_140&v=1585730185").into( miivavatar)
         }
         mitvavatar.text = u.nick
     }

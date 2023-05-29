@@ -9,17 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 import net.uji.lolplus.R
 import net.uji.lolplus.model.User
 import net.uji.lolplus.presenter.ProfilePresenter
-import net.uji.lolplus.presenter.UserPresenter
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -48,12 +43,12 @@ class ProfileFragment : Fragment(), AdapterView.OnItemSelectedListener {
         fab.hide()
         userShare = requireActivity().getSharedPreferences("usuarioShare", Context.MODE_PRIVATE)
         presenter.loadUser()
-        cargarDatos()
+        loadData()
         btnsaveprofile.setOnClickListener{presenter.save()}
         btnfecha.setOnClickListener { clickDatePicker()  }
     }
 
-    private fun cargarDatos(){
+    private fun loadData(){//just fill the data
         tvusername.text= user.nick
         tvchampfavprofile.text=user.champfav
         profilestate.setText(user.state)
@@ -61,13 +56,13 @@ class ProfileFragment : Fragment(), AdapterView.OnItemSelectedListener {
         var inicio=0
         if(user.positionfav!=""){
             for (i in 0 until positions.size) {
-                if (positions[i]== user.positionfav){//cojo la posicion del concepto que voy a editar
+                if (positions[i]== user.positionfav){//I take the position of the concept that I am going to edit
                     inicio=i
                     pselected=positions[i]//lo guardo
                 }
             }
             positions.removeAt(inicio)
-            positions.add(0,pselected)//y meto ese mismo concepto pero el primero
+            positions.add(0,pselected)//and I put that same concept but the first
         }else{
             positions=arrayListOf ("","ADC","MID","TOP","JUN","SUPP")
         }

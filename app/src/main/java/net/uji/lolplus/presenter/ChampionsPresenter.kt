@@ -20,4 +20,5 @@ class ChampionsPresenter(private val view: ChampionsFragment) {
     fun orderChampions() {
         view.showChampions(model.orderChampions())
     }
+
 }

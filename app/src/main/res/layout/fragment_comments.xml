@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/fondo"
-            android:layout_weight="9" />
+            android:layout_weight="5" />
 
         <LinearLayout
             android:id="@+id/cc"
@@ -28,7 +28,7 @@
             <EditText
                 android:id="@+id/etcomentario"
                 android:layout_width="0dp"
-                android:layout_weight="8"
+                android:layout_weight="6"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"

@@ -2,7 +2,6 @@ package net.uji.lolplus.model
 
 import android.app.AlertDialog
 import android.util.Log
-import android.widget.Toast
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -16,7 +15,7 @@ import kotlin.collections.ArrayList
 class CommentModel(private val view: FragmentComments ) {
     private lateinit var db: FirebaseFirestore
 
-    private var contcoment=0
+    private var contcoment=0//the title of the element in db
     private var norden =0
     private lateinit var comments: List<Comment>
 
@@ -39,7 +38,7 @@ class CommentModel(private val view: FragmentComments ) {
         builder.show()
     }
 
-    fun loadC(champ: Champ) {
+    fun loadC(champ: Champ) {//update the comments to automatically act on changes
         db = FirebaseFirestore.getInstance()
         val docRef = db.collection("campeones").document(champ.name).collection("comentarios")
         docRef.addSnapshotListener { snapshot, e ->
@@ -115,7 +114,7 @@ class CommentModel(private val view: FragmentComments ) {
         }
     }
 
-    private fun fill(){
+    private fun fill(){//control what comments are from the online user
         contcoment=0
         for(c in comments){
             for(u in view.users){
@@ -139,14 +138,14 @@ class CommentModel(private val view: FragmentComments ) {
         view.user= view.usersAL[0]
     }
 
-    fun orderComments(): List<Comment>{
+    fun orderComments(): List<Comment>{//like champions
         norden++
         if(norden==0){
-            Toast.makeText(view.context,"Order by oldest comment", Toast.LENGTH_LONG).show()
+           view.showMessage("Order by oldest comment")
             return comments.sortedBy { it.ncoment}
 
         }else if(norden==1){
-            Toast.makeText(view.context,"Order by most recent comment", Toast.LENGTH_LONG).show()
+            view.showMessage("Order by most recent comment")
             norden=-1
             return comments.sortedByDescending { it.ncoment }
 
@@ -155,7 +154,7 @@ class CommentModel(private val view: FragmentComments ) {
         }
     }
 
-    fun sendC(champ: Champ) {
+    fun sendC(champ: Champ) {//create the new comment in the DataBase
         db = FirebaseFirestore.getInstance()
         val sdf= SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
         val fecha= sdf.format(Date())

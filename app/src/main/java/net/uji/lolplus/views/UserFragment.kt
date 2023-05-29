@@ -12,22 +12,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.android.volley.RequestQueue
-import com.android.volley.toolbox.ImageRequest
-import com.android.volley.toolbox.Volley
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.gson.Gson
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_user.*
-import kotlinx.android.synthetic.main.nav_header_main.view.*
-import kotlinx.android.synthetic.main.row_skills.view.*
 import net.uji.lolplus.R
-import net.uji.lolplus.model.PictureModel
 import net.uji.lolplus.model.User
 import net.uji.lolplus.presenter.UserPresenter
 
@@ -62,7 +52,7 @@ class UserFragment : Fragment() {
         btnlog.setOnClickListener{ v->onClickUser(v)}
     }
 
-    private fun onClickUser(v: View) {
+    private fun onClickUser(v: View) {//control the options with the 2 buttons
         val btn = v as Button
         presenter.loadUser()
         btnlog.isEnabled = false

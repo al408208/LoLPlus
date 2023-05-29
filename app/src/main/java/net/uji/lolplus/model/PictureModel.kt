@@ -8,10 +8,9 @@ import net.uji.lolplus.views.ChoosePictureActivity
 class PictureModel(private val view: ChoosePictureActivity) {
 
     private lateinit var champions: List<Champ>
-    private lateinit var champ: Champ
     private lateinit var db: FirebaseFirestore
 
-    fun getData() {
+    fun getData() {//i need all data to change the champfav
         db = FirebaseFirestore.getInstance()
         db.collection("campeones")
             .get()

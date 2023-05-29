@@ -5,10 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.Volley
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row_champ.view.*
 import net.uji.lolplus.model.Champ
 
@@ -40,8 +38,8 @@ class ChampionsAdapter(val context: Context,
 
     class ViewHolder(viewlayout: View, val context: Context) : RecyclerView.ViewHolder(viewlayout) {
         fun bind(dataItem: Champ){
-            // itemview es el item de diseño
-            // al que hay que poner los datos del objeto dataItem
+            // itemview is the layout item
+            // to which to put the data of the dataItem object
             itemView.namerow.text = dataItem.name
             itemView.rolerow.text = dataItem.role
             if(dataItem.difficulty=="1"){
@@ -52,7 +50,7 @@ class ChampionsAdapter(val context: Context,
                 itemView.rowdificulty.text="High"
             }
 
-            var rq = Volley.newRequestQueue(context)
+            val rq = Volley.newRequestQueue(context)
             val imageRequest = ImageRequest("https://opgg-static.akamaized.net/images/lol/champion/${dataItem.name}.png?image=q_auto,w_140&v=1585730185",
                 { response ->
                     itemView.ivrowchamp.setImageBitmap(response)
@@ -62,7 +60,6 @@ class ChampionsAdapter(val context: Context,
                 }
             )
             rq.add(imageRequest)
-            //Picasso.get().load("https://opgg-static.akamaized.net/images/lol/champion/${dataItem.name}.png?image=q_auto,w_140&v=1585730185").into( itemView.ivrowchamp)
             itemView.tag = dataItem
         }
 

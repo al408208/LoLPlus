@@ -1,13 +1,9 @@
 package net.uji.lolplus.model
 
-import android.content.SharedPreferences
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.gson.Gson
-import net.uji.lolplus.views.ChampionsFragment
-import net.uji.lolplus.views.ChoosePictureActivity
 import net.uji.lolplus.views.MetaFragment
-import org.jetbrains.anko.makeCall
 
 class MetaModel(private val view: MetaFragment) {
 
@@ -15,7 +11,7 @@ class MetaModel(private val view: MetaFragment) {
     private lateinit var champ: Champ
     private lateinit var db: FirebaseFirestore
 
-    fun getData() {
+    fun getData() {// I need all data base to control the champ selected
         db = FirebaseFirestore.getInstance()
         db.collection("campeones")
             .get()

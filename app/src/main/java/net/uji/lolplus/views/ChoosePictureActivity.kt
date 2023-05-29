@@ -38,7 +38,7 @@ class ChoosePictureActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    fun  makePictures(champions: List<Champ>) {
+    fun  makePictures(champions: List<Champ>) {// fill all photos
         this.champions=champions
         var cont = 0
         for (i in 0 until lv.size){
@@ -47,7 +47,7 @@ class ChoosePictureActivity : AppCompatActivity(), View.OnClickListener {
                 ivmatriz[i][j] = lh.getChildAt(j) as ImageView
                 ivmatriz[i][j]!!.tag = this.champions[cont]
 
-                var rq = Volley.newRequestQueue(this)
+                val rq = Volley.newRequestQueue(this)
                 val imageRequest = ImageRequest("https://opgg-static.akamaized.net/images/lol/champion/${this.champions[cont].name}.png?image=q_auto,w_140&v=1585730185",
                     { response ->
                         ivmatriz[i][j]?.setImageBitmap(response)
@@ -57,7 +57,6 @@ class ChoosePictureActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 )
                 rq.add(imageRequest)
-                //Picasso.get().load("https://opgg-static.akamaized.net/images/lol/champion/${champions[cont].name}.png?image=q_auto,w_140&v=1585730185").into( ivmatriz[i][j])
 
                 ivmatriz[i][j]!!.setOnClickListener(this)
                 cont++

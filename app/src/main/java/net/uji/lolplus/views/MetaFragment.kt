@@ -55,7 +55,7 @@ class MetaFragment : Fragment(), View.OnClickListener  {
     }
 
 
-    fun makePictures() {
+    fun makePictures() {//fill in all photos
         var cont = 0
         for (i in 0 until lvmeta.size) {
             val lh = lvmeta.getChildAt(i) as LinearLayout
@@ -63,7 +63,7 @@ class MetaFragment : Fragment(), View.OnClickListener  {
                 ivmatriz[i][j] = lh.getChildAt(j) as ImageView
                 ivmatriz[i][j]!!.tag = bestchamp[cont]
 
-                var rq = Volley.newRequestQueue(context)
+                val rq = Volley.newRequestQueue(context)
                 val imageRequest = ImageRequest("https://opgg-static.akamaized.net/images/lol/champion/${bestchamp[cont]}.png?image=q_auto,w_140&v=1585730185",
                     { response ->
                         ivmatriz[i][j]?.setImageBitmap(response)

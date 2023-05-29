@@ -2,7 +2,7 @@ package net.uji.lolplus.model
 
 class StartModel {
 
-    fun chooseVideo(videos: ArrayList<String>): String {
+    fun chooseVideo(videos: ArrayList<String>): String {//Select a random video
         val n= (Math.random()*5).toInt()
         val videoId = videos[n]
         return videoId

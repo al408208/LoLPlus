@@ -5,12 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageRequest
 import com.android.volley.toolbox.Volley
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.row_comment.view.*
-import kotlinx.android.synthetic.main.row_skills.view.*
 import net.uji.lolplus.R
 import net.uji.lolplus.model.Comment
 
@@ -52,7 +49,7 @@ class ComentAdapter(val context: Context,
                 itemView.ivcomment.setImageResource(R.drawable.noone)
             }else{
 
-                var rq = Volley.newRequestQueue(context)
+                val rq = Volley.newRequestQueue(context)
                 val imageRequest = ImageRequest("https://opgg-static.akamaized.net/images/lol/champion/${dataItem.user.champfav}.png?image=q_auto,w_140&v=1585730185",
                     { response ->
                         itemView.ivcomment.setImageBitmap(response)
@@ -62,7 +59,6 @@ class ComentAdapter(val context: Context,
                     }
                 )
                 rq.add(imageRequest)
-                //Picasso.get().load("https://opgg-static.akamaized.net/images/lol/champion/${dataItem.user.champfav}.png?image=q_auto,w_140&v=1585730185").into( itemView.ivcomment)
             }
 
             itemView.tag = dataItem
