@@ -19,6 +19,8 @@ class CommentModel(private val view: FragmentComments ) {
     private var norden =0
     private lateinit var comments: List<Comment>
 
+    lateinit var users: ArrayList<User>
+
 
 
 
@@ -90,7 +92,7 @@ class CommentModel(private val view: FragmentComments ) {
     }
 
     private fun documentToUsuarios(documents: QuerySnapshot) {
-        view.users=ArrayList()
+        users=ArrayList()
         documents.forEach { d ->
             val nick = d["nick"] as String
             var champfav = ""
@@ -110,14 +112,16 @@ class CommentModel(private val view: FragmentComments ) {
                 estado = d["estado"] as String
             }
 
-            view.users.add(User(nick = nick,champfav = champfav, positionfav = posicionfav, fstart = finicio, state = estado))
+            //Log.d("davidd",d["posicionfav"] as String)
+
+            users.add(User(nick = nick,champfav = champfav, positionfav = posicionfav, fstart = finicio, state = estado))
         }
     }
 
     private fun fill(){//control what comments are from the online user
         contcoment=0
         for(c in comments){
-            for(u in view.users){
+            for(u in users){
                 if(c.user.nick==u.nick){
                     c.user=u
                 }

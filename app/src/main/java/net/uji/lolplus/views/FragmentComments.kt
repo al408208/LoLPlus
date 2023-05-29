@@ -27,7 +27,6 @@ class FragmentComments : Fragment(),ComentAdapter.OnLongClickListenerComent {
     lateinit var userShare: SharedPreferences
     lateinit var usersAL: ArrayList<User>
     lateinit var user: User
-    lateinit var users: ArrayList<User>
 
     private lateinit var presenter: CommentPresenter
 
@@ -88,5 +87,6 @@ class FragmentComments : Fragment(),ComentAdapter.OnLongClickListenerComent {
         }
         return true
     }
+
 
 }

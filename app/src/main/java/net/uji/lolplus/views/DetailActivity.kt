@@ -1,6 +1,7 @@
 package net.uji.lolplus.views
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -32,13 +33,13 @@ class DetailActivity : AppCompatActivity(),
 
         if (savedInstanceState != null) {
             val fragment = supportFragmentManager.getFragment(savedInstanceState, "yourFragmentKey")
-            // Reemplazar el fragmento actual con el fragmento restaurado si es necesario
+            // Replace the current fragment with the restored fragment if necessary
             if (fragment != null) {
-                // Reemplazar el fragmento actual con el fragmento restaurado
+                // Replace the current fragment with the restored fragment
                 replaceFragment(fragment)
             }
         } else {
-            // Configuración inicial de los fragmentos si no hay estado guardado
+            // Initial configuration of the fragments if there is no saved state
             setInitialFragment()
         }
         //setInitialFragment()
@@ -102,7 +103,6 @@ class DetailActivity : AppCompatActivity(),
                 }
             )
             rq.add(imageRequest)
-            //Picasso.get().load("https://opgg-static.akamaized.net/images/lol/champion/${comentariop.user.champfav}.png?image=q_auto,w_140&v=1585730185").into(perfilLayout.ivperfildialog)
         }
         perfilLayout.tvnombredialog.text=comentariop.user.nick
         perfilLayout.tvestadodialog.text=comentariop.user.state
